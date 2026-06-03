@@ -26,7 +26,7 @@ else
     echo "==> Oh My Zsh already installed"
 fi
 
-# --- Git submodules (nvim, tpm) ---
+# --- Git submodules (tpm) ---
 echo "==> Initializing git submodules..."
 cd "$DOTFILES_DIR"
 git submodule update --init --recursive
@@ -35,7 +35,7 @@ git submodule update --init --recursive
 echo "==> Linking dotfiles with stow..."
 
 # Remove existing files that would conflict with stow symlinks
-for target in "$HOME/.zshrc" "$HOME/.tmux.conf" "$HOME/.gitconfig"; do
+for target in "$HOME/.zshrc" "$HOME/.tmux.conf" "$HOME/.gitconfig" "$HOME/.p10k.zsh"; do
     if [ -f "$target" ] && [ ! -L "$target" ]; then
         echo "    Backing up $target -> ${target}.bak"
         mv "$target" "${target}.bak"
@@ -57,6 +57,7 @@ stow -v -t "$HOME" starship
 stow -v -t "$HOME" btop
 stow -v -t "$HOME" k9s
 stow -v -t "$HOME" lazygit
+stow -v -t "$HOME" p10k
 
 # --- Neovim (submodule, symlinked separately) ---
 echo "==> Linking Neovim config..."
