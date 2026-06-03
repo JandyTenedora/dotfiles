@@ -1,0 +1,14 @@
+-- Project-local DAP configuration.
+-- Copy this file to your project root and uncomment the relevant config.
+-- Requires: JVM started with JDWP agent:
+--   -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005
+-- For Kubernetes: kubectl port-forward pod/my-pod 5005:5005
+
+-- local dap = require("dap")
+-- table.insert(dap.configurations.scala, {
+-- 	type = "scala",
+-- 	request = "attach",
+-- 	name = "Attach to remote",
+-- 	hostName = "localhost",
+-- 	port = 5005,
+-- })

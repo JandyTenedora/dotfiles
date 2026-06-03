@@ -1,0 +1,140 @@
+# Catppuccin Mocha palette for Starship
+# Matches tmux theme: base=#1e1e2e, text=#cdd6f4, blue=#89b4fa
+
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_commit\
+$git_state\
+$git_status\
+$git_metrics\
+$java\
+$python\
+$nodejs\
+$golang\
+$lua\
+$rust\
+$docker_context\
+$kubernetes\
+$package\
+$memory_usage\
+$cmd_duration\
+$jobs\
+$time\
+$line_break\
+$character"""
+
+[character]
+success_symbol = "[❯](bold #89b4fa)"
+error_symbol = "[❯](bold #f38ba8)"
+
+[username]
+show_always = true
+style_user = "bold #cba6f7"
+format = "[$user]($style) in "
+
+[hostname]
+ssh_only = true
+style = "bold #f5c2e7"
+format = "[$hostname]($style) in "
+
+[directory]
+style = "bold #89b4fa"
+truncation_length = 0
+truncate_to_repo = false
+read_only_style = "#f38ba8"
+read_only = " 🔒"
+
+[git_branch]
+style = "bold #a6e3a1"
+format = "on [$symbol$branch(:$remote_branch)]($style) "
+
+[git_commit]
+style = "#89dceb"
+tag_disabled = false
+format = '[($hash$tag)]($style) '
+
+[git_state]
+style = "#f38ba8"
+format = '[\($state( $progress_current/$progress_total)\)]($style) '
+
+[git_status]
+style = "#f9e2af"
+format = '([$all_status$ahead_behind]($style) )'
+conflicted = "=${count} "
+ahead = "⇡${count} "
+behind = "⇣${count} "
+diverged = "⇕⇡${ahead_count}⇣${behind_count} "
+untracked = "?${count} "
+stashed = "*${count} "
+modified = "!${count} "
+staged = "+${count} "
+renamed = "»${count} "
+deleted = "✘${count} "
+
+[git_metrics]
+disabled = false
+added_style = "#a6e3a1"
+deleted_style = "#f38ba8"
+format = '([+$added]($added_style) )([-$deleted]($deleted_style) )'
+
+[java]
+style = "#fab387"
+format = "[$symbol($version)]($style) "
+
+[python]
+style = "#f9e2af"
+format = "[$symbol$version( \\($virtualenv\\))]($style) "
+
+[nodejs]
+style = "#a6e3a1"
+format = "[$symbol($version)]($style) "
+
+[golang]
+style = "#89dceb"
+format = "[$symbol($version)]($style) "
+
+[lua]
+style = "#89b4fa"
+format = "[$symbol($version)]($style) "
+
+[rust]
+style = "#fab387"
+format = "[$symbol($version)]($style) "
+
+[docker_context]
+style = "#89b4fa"
+format = "[$symbol$context]($style) "
+
+[kubernetes]
+disabled = false
+style = "#cba6f7"
+format = "[$symbol$context(/$namespace)]($style) "
+
+[package]
+style = "#fab387"
+format = "[$symbol$version]($style) "
+
+[memory_usage]
+disabled = false
+threshold = 75
+style = "#f38ba8"
+format = "$symbol[${ram}( | ${swap})]($style) "
+
+[cmd_duration]
+style = "#6c7086"
+min_time = 500
+show_milliseconds = true
+format = "took [$duration]($style) "
+
+[jobs]
+style = "#89b4fa"
+format = "[$symbol$number]($style) "
+
+[time]
+disabled = false
+style = "#6c7086"
+format = "at [$time]($style)"
+time_format = "%H:%M:%S"
