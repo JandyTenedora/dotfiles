@@ -1,0 +1,9 @@
+.DS_Store
+*.bak
+*.swp
+*.swo
+*~
+
+# TPM-installed plugins (tpm itself is a submodule)
+tmux/.tmux/plugins/*
+!tmux/.tmux/plugins/tpm/
