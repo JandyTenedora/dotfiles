@@ -20,5 +20,6 @@ return {
 				},
 			},
 		})
+		vim.lsp.enable("jdtls")
 	end,
 }
