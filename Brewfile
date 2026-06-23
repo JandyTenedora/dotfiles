@@ -45,6 +45,7 @@ brew "gh"
 brew "grpcurl"
 
 # Casks (GUI apps)
+cask "ghostty"
 cask "iterm2"
 cask "docker-desktop"
 cask "font-jetbrains-mono-nerd-font"
