@@ -11,7 +11,7 @@ return {
 		lazy = false,
 		config = function()
 			require("mason-lspconfig").setup({
-				ensure_installed = { "lua_ls", "gopls", "pyright", "starpls" },
+				ensure_installed = { "lua_ls", "gopls", "pyright", "starpls", "rust_analyzer" },
 			})
 		end,
 	},
@@ -64,7 +64,16 @@ return {
 				root_markers = { "MODULE.bazel", "WORKSPACE.bazel", "WORKSPACE", ".git" },
 			})
 
-			vim.lsp.enable({ "lua_ls", "gopls", "pyright", "starpls" })
+			vim.lsp.config("rust_analyzer", {
+				settings = {
+					["rust-analyzer"] = {
+						check = { command = "clippy" },
+						cargo = { allFeatures = true },
+					},
+				},
+			})
+
+			vim.lsp.enable({ "lua_ls", "gopls", "pyright", "starpls", "rust_analyzer" })
 		end,
 	},
 }

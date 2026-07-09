@@ -1,8 +1,18 @@
 [user]
 	name = Jandy Tenedora
 	useConfigOnly = true
+[core]
+	excludesfile = ~/.gitignore_global
+	pager = delta
 [push]
 	default = simple
+[merge]
+	tool = diffview
+	conflictstyle = zdiff3
+[mergetool]
+	keepBackup = false
+[mergetool "diffview"]
+	cmd = nvim -c \"DiffviewOpen\" \"$MERGED\"
 [filter "lfs"]
 	process = git-lfs filter-process --skip
 	required = true

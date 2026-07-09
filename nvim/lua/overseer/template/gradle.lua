@@ -8,6 +8,23 @@ local function get_gradlew(opts)
 	return vim.fs.find("gradlew", { upward = true, type = "file", path = opts.dir })[1]
 end
 
+local function get_java_home(project_dir)
+	local sdkmanrc = project_dir .. "/.sdkmanrc"
+	local f = io.open(sdkmanrc, "r")
+	if not f then
+		return nil
+	end
+	for line in f:lines() do
+		local version = line:match("^java=(.+)$")
+		if version then
+			f:close()
+			return os.getenv("HOME") .. "/.sdkman/candidates/java/" .. version
+		end
+	end
+	f:close()
+	return nil
+end
+
 local commands = {
 	{ args = { "build", "-x", "test", "-x", "integrationTest" }, tags = { TAG.BUILD }, label = "build (no tests)" },
 	{ args = { "build" }, tags = { TAG.BUILD }, label = "build" },
@@ -28,6 +45,8 @@ return {
 			return "No gradlew found"
 		end
 		local cwd = vim.fs.dirname(gradlew)
+		local java_home = get_java_home(cwd)
+		local env = java_home and { JAVA_HOME = java_home } or nil
 		local ret = {}
 		for _, command in ipairs(commands) do
 			table.insert(ret, {
@@ -37,6 +56,7 @@ return {
 					return {
 						cmd = vim.list_extend({ gradlew }, command.args),
 						cwd = cwd,
+						env = env,
 					}
 				end,
 			})

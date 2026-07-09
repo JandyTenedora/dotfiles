@@ -30,6 +30,7 @@ return {
 					{ name = "buffer" },
 				}),
 			})
+			cmp.setup.filetype("OverseerForm", { enabled = false })
 		end,
 	},
 }

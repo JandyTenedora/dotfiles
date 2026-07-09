@@ -1,0 +1,16 @@
+# Personal scalafmt config — never commit to any repo
+.scalafmt.local.conf
+
+# VS Code / overseer.nvim per-repo task config
+.vscode/
+
+# sdkman per-project Java version
+.sdkmanrc
+
+# Metals (Scala LSP) IDE files
+.metals/
+.bloop/
+
+**/.claude/settings.local.json
+
+**/.claude/.cc-writes/
