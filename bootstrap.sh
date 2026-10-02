@@ -58,6 +58,7 @@ stow -v -t "$HOME" btop
 stow -v -t "$HOME" k9s
 stow -v -t "$HOME" lazygit
 stow -v -t "$HOME" p10k
+stow -v -t "$HOME" aihero-skills
 
 # --- Neovim (submodule, symlinked separately) ---
 echo "==> Linking Neovim config..."
