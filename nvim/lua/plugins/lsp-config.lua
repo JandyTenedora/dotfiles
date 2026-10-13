@@ -29,6 +29,8 @@ return {
 			vim.keymap.set("n", "<space>rn", vim.lsp.buf.rename, {})
 			vim.keymap.set("n", "<leader>cl", vim.lsp.codelens.run, {})
 			vim.keymap.set("n", "<leader>e", vim.diagnostic.open_float, {})
+			vim.keymap.set("n", "<leader>gi", vim.lsp.buf.implementation, {})
+			vim.keymap.set("n", "<leader>gt", vim.lsp.buf.type_definition, {})
 
 			vim.lsp.config("lua_ls", {
 				settings = { Lua = { diagnostics = { globals = { "vim" } } } },
