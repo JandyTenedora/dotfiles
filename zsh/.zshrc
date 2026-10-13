@@ -16,7 +16,11 @@ source $ZSH/oh-my-zsh.sh
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
+ulimit -n 8192
+
 export PATH="$HOME/.local/bin:$PATH"
+
+alias gdupload='gdrive-upload'
 
 export PATH="/opt/homebrew/bin:$PATH"
 
