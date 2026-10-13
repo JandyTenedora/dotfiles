@@ -1,0 +1,128 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  cat <<'EOF'
+Usage: gdrive-upload [-n NAME] [-u FILE_ID] <file.docx|file.md>
+
+Upload a Word or Markdown document to Google Drive as a native Google Doc.
+
+Options:
+  -n NAME      Google Doc title (default: filename without extension)
+  -u FILE_ID   Replace the contents of an existing Google Doc
+  -h           Show this help
+
+Authentication:
+  gcloud auth login --enable-gdrive-access
+EOF
+}
+
+die() {
+  printf 'gdrive-upload: %s\n' "$*" >&2
+  exit 1
+}
+
+document_name=""
+file_id=""
+
+while getopts ":n:u:h" option; do
+  case "$option" in
+    n) document_name="$OPTARG" ;;
+    u) file_id="$OPTARG" ;;
+    h)
+      usage
+      exit 0
+      ;;
+    : ) die "option -$OPTARG requires a value" ;;
+    \?) die "unknown option: -$OPTARG" ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+[[ $# -eq 1 ]] || {
+  usage >&2
+  exit 1
+}
+
+input_file="$1"
+[[ -f "$input_file" ]] || die "file not found: $input_file"
+
+for dependency in gcloud curl jq; do
+  command -v "$dependency" >/dev/null 2>&1 || die "required command not found: $dependency"
+done
+
+input_dir="$(cd "$(dirname "$input_file")" && pwd)"
+input_file="$input_dir/$(basename "$input_file")"
+[[ -n "$document_name" ]] || document_name="$(basename "${input_file%.*}")"
+
+temporary_dir="$(mktemp -d "${TMPDIR:-/tmp}/gdrive-upload.XXXXXX")"
+cleanup() {
+  rm -rf "$temporary_dir"
+}
+trap cleanup EXIT
+
+case "$input_file" in
+  *.docx)
+    upload_file="$input_file"
+    ;;
+  *.md)
+    command -v pandoc >/dev/null 2>&1 || die "pandoc is required to upload Markdown files"
+    converted_markdown="$temporary_dir/document.md"
+    upload_file="$temporary_dir/document.docx"
+
+    # Translate Obsidian image embeds into links Pandoc can resolve.
+    sed 's/!\[\[\([^]|]*\)\(|[^]]*\)\{0,1\}\]\]/![\1](\1)/g' "$input_file" > "$converted_markdown"
+    pandoc "$converted_markdown" --resource-path="$input_dir" -o "$upload_file"
+    ;;
+  *)
+    die "expected a .docx or .md file"
+    ;;
+esac
+
+access_token="$(gcloud auth print-access-token)" || die "could not obtain a gcloud access token"
+response_file="$temporary_dir/response.json"
+
+if [[ -n "$file_id" ]]; then
+  http_status="$(curl --silent --show-error \
+    --output "$response_file" \
+    --write-out '%{http_code}' \
+    --request PATCH \
+    "https://www.googleapis.com/upload/drive/v3/files/${file_id}?uploadType=media&fields=id,name,mimeType,webViewLink" \
+    --header "Authorization: Bearer $access_token" \
+    --header 'Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document' \
+    --data-binary "@$upload_file")"
+else
+  boundary="gdrive_upload_$$_$(date +%s)"
+  request_body="$temporary_dir/request.body"
+  metadata="$(jq -cn --arg name "$document_name" '{name: $name, mimeType: "application/vnd.google-apps.document"}')"
+
+  {
+    printf -- '--%s\r\n' "$boundary"
+    printf 'Content-Type: application/json; charset=UTF-8\r\n\r\n'
+    printf '%s\r\n' "$metadata"
+    printf -- '--%s\r\n' "$boundary"
+    printf 'Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document\r\n\r\n'
+    command cat "$upload_file"
+    printf '\r\n--%s--\r\n' "$boundary"
+  } > "$request_body"
+
+  http_status="$(curl --silent --show-error \
+    --output "$response_file" \
+    --write-out '%{http_code}' \
+    --request POST \
+    'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,name,mimeType,webViewLink' \
+    --header "Authorization: Bearer $access_token" \
+    --header "Content-Type: multipart/related; boundary=$boundary" \
+    --data-binary "@$request_body")"
+fi
+
+if [[ ! "$http_status" =~ ^2 ]]; then
+  printf 'gdrive-upload: Google Drive returned HTTP %s\n' "$http_status" >&2
+  jq . "$response_file" >&2 2>/dev/null || command cat "$response_file" >&2
+  exit 1
+fi
+
+jq -r '
+  "Uploaded: \(.name // "Google Doc")\n" +
+  (.webViewLink // ("https://drive.google.com/open?id=" + .id))
+' "$response_file"
