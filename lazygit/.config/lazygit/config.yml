@@ -1,8 +1,16 @@
 git:
-  paging:
-    colorArg: always
-    pager: delta --dark --paging=never
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never
   merging:
     manualCommit: true
 os:
   editPreset: 'nvim'
+customCommands:
+  - key: '<c-g>'
+    context: 'files'
+    description: 'Resolve conflicts with Diffview'
+    command: "NVIM_MINIMAL_UI=1 nvim -c 'DiffviewOpen'"
+    output: 'terminal'
+    after:
+      checkForConflicts: true
