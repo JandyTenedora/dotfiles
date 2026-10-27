@@ -50,30 +50,32 @@ return {
 		vim.keymap.set("n", "<Leader>do", ":DapStepOver<CR>")
 		vim.keymap.set("n", "<Leader>du", function() dapui.toggle() end)
 
-		vim.api.nvim_create_autocmd("VimEnter", {
-			callback = function()
-				dapui.open()
-				vim.cmd("Neotree filesystem show left")
-				vim.schedule(function()
-					for _, win in ipairs(vim.api.nvim_list_wins()) do
-						local buf = vim.api.nvim_win_get_buf(win)
-						if vim.bo[buf].filetype == "dap-repl" then
-							vim.api.nvim_set_current_win(win)
-							vim.cmd("leftabove vsplit")
-							local overseer_buf = require("overseer.task_list").get_or_create_bufnr()
-							vim.api.nvim_win_set_buf(0, overseer_buf)
-							break
+		if not vim.g.minimal_ui then
+			vim.api.nvim_create_autocmd("VimEnter", {
+				callback = function()
+					dapui.open()
+					vim.cmd("Neotree filesystem show left")
+					vim.schedule(function()
+						for _, win in ipairs(vim.api.nvim_list_wins()) do
+							local buf = vim.api.nvim_win_get_buf(win)
+							if vim.bo[buf].filetype == "dap-repl" then
+								vim.api.nvim_set_current_win(win)
+								vim.cmd("leftabove vsplit")
+								local overseer_buf = require("overseer.task_list").get_or_create_bufnr()
+								vim.api.nvim_win_set_buf(0, overseer_buf)
+								break
+							end
 						end
-					end
-					for _, win in ipairs(vim.api.nvim_list_wins()) do
-						local buf = vim.api.nvim_win_get_buf(win)
-						if vim.bo[buf].buftype == "" and vim.bo[buf].filetype == "" then
-							vim.api.nvim_set_current_win(win)
-							break
+						for _, win in ipairs(vim.api.nvim_list_wins()) do
+							local buf = vim.api.nvim_win_get_buf(win)
+							if vim.bo[buf].buftype == "" and vim.bo[buf].filetype == "" then
+								vim.api.nvim_set_current_win(win)
+								break
+							end
 						end
-					end
-				end)
-			end,
-		})
+					end)
+				end,
+			})
+		end
 	end,
 }

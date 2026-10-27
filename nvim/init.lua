@@ -1,4 +1,6 @@
 -- luacheck: globals vim
+vim.g.minimal_ui = vim.env.NVIM_MINIMAL_UI == "1"
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	vim.fn.system({
@@ -11,7 +13,10 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 	})
 end
 vim.opt.rtp:prepend(lazypath)
-vim.cmd([[autocmd VimEnter * Neotree filesystem reveal left]])
+
+if not vim.g.minimal_ui then
+	vim.cmd([[autocmd VimEnter * Neotree filesystem reveal left]])
+end
 
 require("vim-options")
 require("lazy").setup("plugins")

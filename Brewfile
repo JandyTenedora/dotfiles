@@ -32,6 +32,9 @@ brew "docker"
 brew "docker-completion"
 brew "lazydocker"
 
+# Python tooling
+brew "uv"
+
 # Build tools
 brew "maven"
 brew "bazelisk"

@@ -13,6 +13,8 @@
 	keepBackup = false
 [mergetool "diffview"]
 	cmd = nvim -c \"DiffviewOpen\" \"$MERGED\"
+[url "git@github.com-personal:"]
+	insteadOf = https://github.com/
 [filter "lfs"]
 	process = git-lfs filter-process --skip
 	required = true

@@ -23,23 +23,5 @@ return {
 			},
 		})
 		vim.lsp.enable("jdtls")
-
-		vim.api.nvim_create_autocmd("LspAttach", {
-			callback = function(args)
-				local client = vim.lsp.get_client_by_id(args.data.client_id)
-				if not client or client.name ~= "jdtls" then
-					return
-				end
-				local jdtls = require("jdtls")
-				local opts = { buffer = args.buf }
-				vim.keymap.set("n", "<leader>si", jdtls.super_implementation, opts)
-				vim.keymap.set("n", "<leader>oi", jdtls.organize_imports, opts)
-				vim.keymap.set("n", "<leader>ev", jdtls.extract_variable, opts)
-				vim.keymap.set("n", "<leader>ec", jdtls.extract_constant, opts)
-				vim.keymap.set("v", "<leader>em", function()
-					jdtls.extract_method(true)
-				end, opts)
-			end,
-		})
 	end,
 }
