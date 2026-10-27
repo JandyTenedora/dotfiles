@@ -159,7 +159,7 @@ codexa() {
         pet_name=""
         ;;
       --list-pets)
-        /Users/user/.codex/codex-pet-overlay/scripts/select-pet.sh list
+        $HOME/.codex/codex-pet-overlay/scripts/select-pet.sh list
         return $?
         ;;
       --help)
@@ -183,9 +183,9 @@ codexa() {
 
   if (( start_pet )); then
     if [[ -n "$pet_name" ]]; then
-      /Users/user/.codex/codex-pet-overlay/scripts/select-pet.sh "$pet_name" >/dev/null || return $?
+      $HOME/.codex/codex-pet-overlay/scripts/select-pet.sh "$pet_name" >/dev/null || return $?
     elif ! /usr/bin/pgrep -f CodexPetOverlay >/dev/null 2>&1; then
-      /Users/user/.codex/codex-pet-overlay/scripts/run-detached.sh >/dev/null || return $?
+      $HOME/.codex/codex-pet-overlay/scripts/run-detached.sh >/dev/null || return $?
     fi
   fi
 
